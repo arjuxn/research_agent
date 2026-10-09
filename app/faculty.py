@@ -12,12 +12,18 @@ from .util import extract_links, host, in_site, registered_domain, root_url, tok
 STRONG = {"faculty", "faculties", "people", "staff", "directory", "hod", "members", "member", "personnel"}
 WEAK = {"head": 0.5, "chair": 0.5, "chairperson": 1.0, "professor": 0.5, "professors": 0.5,
         "team": 0.5, "academic": 0.3, "leadership": 0.5, "administration": 0.3, "teaching": 0.3}
-# Pages about awards, alumni, news, students... mention professors but are not the department's roster
+# Pages about awards, alumni, news, accreditation, hiring... mention faculty/members but are not the
+# department's roster
 EXCLUDE = {
     "recognitions", "recognition", "awards", "award", "alumni", "news", "events", "event", "seminar",
     "seminars", "students", "student", "scholars", "phd", "emeritus", "retired", "former", "honorary",
     "adjunct", "visiting", "distinguished", "convocation", "highlights", "research", "publications",
     "projects", "courses", "admissions", "admission",
+    # hiring, accreditation and committee documents ("Faculty Eligibility", "IQAC Members" ...)
+    "eligibility", "iqac", "naac", "nirf", "aqar", "ssr", "committee", "committees", "careers",
+    "career", "recruitment", "vacancy", "vacancies", "advertisement", "mandatory", "disclosure",
+    "policy", "policies", "calendar", "calendars", "brochure", "fee", "fees", "scholarship",
+    "scholarships",
 }
 COMMON_PATHS = ["/faculty/", "/faculty", "/people/", "/people/faculty", "/faculty.php", "/faculty-members",
                 "/people/faculty-members", "/our-people", "/staff", "/directory"]

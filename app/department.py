@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from rapidfuzz import fuzz
 
 from . import config, llm
-from .http import fetch
+from .http import fetch, fetch_robust
 from .util import clean, extract_links, host, in_site, norm, registered_domain, root_url, tokens
 
 
@@ -91,14 +91,14 @@ def get_sitemap_urls(base: str) -> list[str]:
 # ---------- navigation hubs ----------
 def nav_links(base: str) -> list[tuple[str, str]]:
     reg = registered_domain(base)
-    home = fetch(base)
+    home = fetch_robust(base)  # real-browser fallback if the site blocks scripted requests
     if not home or not home.ok or home.is_pdf:
         return []
     links = [(u, t) for u, t in extract_links(home.text, home.url) if in_site(u, reg)]
     out = list(links)
     hubs = [u for u, t in links if HUB_RE.search(f"{t} {urlparse(u).path}")]
     for h in list(dict.fromkeys(hubs))[:4]:
-        p = fetch(h)
+        p = fetch_robust(h)
         if p and p.ok and not p.is_pdf:
             out += [(u, t) for u, t in extract_links(p.text, p.url) if in_site(u, reg)]
     return out
@@ -350,7 +350,7 @@ def _search_fallback(reg: str, discipline: str, terms: set[str], blocked_urls: l
 
 
 def _finalize(url, text, conf, via, terms, blocked_urls: list | None = None) -> Dept | None:
-    page = fetch(url)
+    page = fetch_robust(url)  # tries a real browser first; if that also fails, the original response comes back
     if not page or not page.ok or page.is_pdf:
         if page is None or (page and page.status in (403, 429)):
             if blocked_urls is not None:

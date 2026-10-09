@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS items (
   status TEXT DEFAULT 'Pending', result_json TEXT, error TEXT, updated_at REAL,
   PRIMARY KEY (run_id, key)
 )"""
-FINAL_NOT_FOUND = ["Contact Not Found", "Field Not Found", "Website Not Found"]
+# Statuses that mean "finished, but with no contact": skipped on resume, retried with --retry-failed
+FINAL_NOT_FOUND = ["Contact Not Found", "Field Not Found", "Website Not Found",
+                   "Ambiguous Department", "Department Page Blocked"]
 
 
 def make_key(it: dict) -> str:
